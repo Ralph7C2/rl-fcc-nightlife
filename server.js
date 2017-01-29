@@ -10,14 +10,15 @@ var session = require('express-session');
 var morgan = require('morgan');
 
 var configDB = require('./config/database.js');
-console.log(configDB.url);
-console.log(process.env.MONGODB_URI);
 mongoose.connect(configDB.url);
 mongoose.Promise = global.Promise;
+
 require('./config/passport')(passport);
 
 var app = express();
 var port = process.env.PORT || 8080;
+
+app.use(require('./app/controllers/connection.controller.js'));
 
 app.use(morgan('dev'));
 app.use(cookieParser());

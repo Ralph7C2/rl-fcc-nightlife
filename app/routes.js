@@ -7,7 +7,6 @@ module.exports = function(app, passport) {
 				user : req.user,
 				body : body
 			});
-			console.log(body.zip);
 		}).fail(function(err) {
 			if(err) {
 				res.send(err);

@@ -9,7 +9,6 @@ service.getLocationFromIP = function(IP) {
 		IP = '199.21.127.1';
 	}
 	http.get('http://ip-api.com/json/'+IP, (res) => {
-		console.log(res.statusCode);
 		if(res.statusCode === 200) {
 			res.setEncoding('utf8');
 			var rawData = '';
@@ -17,7 +16,6 @@ service.getLocationFromIP = function(IP) {
 			res.on('end', () => {
 				try {
 					var parsedData = JSON.parse(rawData);
-					console.log(parsedData);
 					if(parsedData.status === 'success') {
 						deferred.resolve(parsedData);
 					} else {
