@@ -32,5 +32,7 @@ app.use(flash());
 
 require('./app/routes.js')(app, passport);
 
+app.use('/api', require('./api/routes.js'));
+
 app.listen(port);
 console.log("Ready to rock on port "+port);

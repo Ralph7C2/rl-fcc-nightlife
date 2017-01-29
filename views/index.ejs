@@ -11,7 +11,26 @@
 	<div class="jumbotron">
 		<h1>Nightlife!</h1>
 	</div>
+	
+	<form>
+		<input type="text" id="searchBox" name="searchBox">
+		<button class="btn btn-large btn-primary" type="button" id="searchButton">Search</button>
+	</form>
 
+	<div id="results"></div>
+	
 </div>
+
+<script>
+$(document).ready(function() {
+	$('#searchButton').click(function() {
+		$.post('/api/search', {
+			searchData : $('#searchBox').val()
+		}, function(res) {
+			$('#results').text(JSON.stringify(res));
+		});
+	});
+});
+</script>
 </body>
 </html>

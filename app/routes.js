@@ -1,7 +1,19 @@
+var indexController = require('./controllers/index.controller.js');
+
 module.exports = function(app, passport) {
 	app.get('/', function(req, res) {
-		res.render('index.ejs', {
-			user : req.user
+		indexController.getLocationFromIP(req.ip).then(function(body) {
+			res.render('index.ejs', {
+				user : req.user,
+				body : body
+			});
+			console.log(body.zip);
+		}).fail(function(err) {
+			if(err) {
+				res.send(err);
+			} else {
+				res.send("Unknown ERROR!!");
+			}
 		});
 	});
 	
