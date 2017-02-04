@@ -6,6 +6,7 @@
 	<style>
 		.row {
 			margin-top: 10px;
+			cursor: pointer;
 		}
 		#page {
 			padding-right: 50px;
@@ -20,12 +21,13 @@
 	
 	<div class="row">
 		<div class="col-xs-6 col-xs-offset-2">
-			<input type="text" id="searchBox" name="searchBox" style="width:100%; height:50px;" value="<%= body.city %>, <%= body.region %>">
+			<input type="text" id="searchBox" name="searchBox" style="width:100%; height:50px;" value="<% if (body.lastSearch) { %><%= body.lastSearch %><% } else { %><%= body.city %>, <%= body.region %><% } %>">
 		</div>
 		<div class="col-xs-2">
 			<button class="btn btn-large btn-primary" type="button" id="searchButton" style="width:100%; height:50px;">Search</button>
 		</div>
 	</div>
+	<a class="btn btn-large btn-warning"  href='/signup'>Signup</a>
 	
 	<div id="results"></div>
 	
@@ -35,7 +37,7 @@
 $(document).ready(function() {
 
 	generateRow = function(business) {
-		var str = '<div class="row"><div class="col-xs-2"><img class="img-rounded" alt="';
+		var str = '<div class="row" id="'+business.id+'"><div class="col-xs-2"><img class="img-rounded" alt="';
 		if(business.img_url) {
 			str+=business.name+' image" ';
 		} else {
@@ -47,7 +49,8 @@ $(document).ready(function() {
 		} else {
 			str+='null';
 		}
-		str+='"></div><div class="col-xs-3"><h1>'+business.name+'</h1></div></div>';
+		str+='"></div><div class="col-xs-3"><h1>'+business.name+'</h1> <p>Users: <span class="userCount">'+business.userCount+'</span></p></div></div>';
+		console.log(business.id + " " +business.userCount);
 		return str;
 	}
 
@@ -56,10 +59,34 @@ $(document).ready(function() {
 		$.post('/api/search', {
 			searchData : $('#searchBox').val()
 		}, function(res) {
-			res.businesses.forEach(function(business) {
+			res.forEach(function(business) {
 				$('#results').append(generateRow(business));
 			});
 		});
+	});
+	$('#results').on("click", ".row", function() {
+		<% if(user) { %>
+			$.post('/api/goto', {
+				userId : '<%=user._id%>',
+				locId  : $(this).attr('id')
+			}, function(res) {
+				console.log(res);
+				if(res.action) {
+					var currentCount = parseInt($('#'+res.id).find('.userCount').text());
+					if(res.action === 'added') {
+						currentCount++;
+					} else {
+						currentCount--;
+					}
+					$('#'+res.id).find('.userCount').text(currentCount);
+				} else {
+					console.log(res);
+				}
+			});
+		console.log($(this).attr('id'));
+		<% } else { %>
+			window.location.href = '/login';
+		<% } %>
 	});
 });
 </script>

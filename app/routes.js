@@ -2,18 +2,27 @@ var indexController = require('./controllers/index.controller.js');
 
 module.exports = function(app, passport) {
 	app.get('/', function(req, res) {
-		indexController.getLocationFromIP(req.ip).then(function(body) {
+		if(req.lastSearch) {
+			console.log("Last search found!");
 			res.render('index.ejs', {
 				user : req.user,
-				body : body
+				body : { 'lastSearch' : req.lastSearch}
 			});
-		}).fail(function(err) {
-			if(err) {
-				res.send(err);
-			} else {
-				res.send("Unknown ERROR!!");
-			}
-		});
+		} else {
+			console.log("Lastsearch not found, using IP");
+			indexController.getLocationFromIP(req.ip).then(function(body) {
+				res.render('index.ejs', {
+					user : req.user,
+					body : body
+				});
+			}).fail(function(err) {
+				if(err) {
+					res.send(err);
+				} else {
+					res.send("Unknown ERROR!!");
+				}
+			});
+		}
 	});
 	
 	app.get('/login', function(req, res) {
