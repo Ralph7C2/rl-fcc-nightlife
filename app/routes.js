@@ -16,6 +16,7 @@ module.exports = function(app, passport) {
 					body : body
 				});
 			}).fail(function(err) {
+				console.log(err);
 				if(err) {
 					res.send(err);
 				} else {

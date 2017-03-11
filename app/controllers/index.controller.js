@@ -5,7 +5,7 @@ service = {};
 
 service.getLocationFromIP = function(IP) {
 	var deferred = Q.defer();
-	if(IP == '::1' || IP == '127.0.0.1') {
+	if(IP == '::1' || IP=='127.0.0.1') {
 		IP = '199.21.127.1';
 	}
 	http.get('http://ip-api.com/json/'+IP, (res) => {
@@ -19,10 +19,9 @@ service.getLocationFromIP = function(IP) {
 					if(parsedData.status === 'success') {
 						deferred.resolve(parsedData);
 					} else {
-						deferred.reject(parsedData.message);
+						deferred.resolve({city: "New York", region: "NY"});
 					}
 				} catch(e) {
-					console.log(e.message);
 					deferred.reject(e.message);
 				}
 			});

@@ -10,6 +10,7 @@ var session = require('express-session');
 var morgan = require('morgan');
 
 var configDB = require('./config/database.js');
+
 mongoose.connect(configDB.url);
 mongoose.Promise = global.Promise;
 
@@ -26,7 +27,7 @@ app.use(bodyParser.urlencoded({extended : true}));
 
 app.set('view engine', 'ejs');
 
-app.use(session({secret : 'keyboard cat'}));
+app.use(session({saveUninitialized: false, resave: false, secret : 'keyboard cat'}));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());

@@ -15,6 +15,9 @@ yelp.accessToken(process.env.YELP_ID, process.env.YELP_SECRET).then((res) => {
 	
 
 router.post('/search', function(req, res) {
+	if(client) {
+		console.log("Client should be good!");
+	}
 	console.log(req.body.searchData);
 	ConnectionInfo.findOneAndUpdate({'ip' : req.ip}, {$set : { 'lastSearch' : req.body.searchData }}, function(err, conn) {
 		if(err) console.log(err);
@@ -23,6 +26,7 @@ router.post('/search', function(req, res) {
 		}
 	});
 	if(client) {
+		console.log("Client found");
 		client.search({term : 'bar', location : req.body.searchData, limit : '50'}).then( (data) => {
 			var body = JSON.parse(data.body);
 			var responseJSON = [];
@@ -31,6 +35,7 @@ router.post('/search', function(req, res) {
 			body.businesses.forEach( (business) => {
 				promises.push(getGoingTos(business));
 			});
+
 			var allPromise = Q.all(promises);
 			allPromise.done(function(result) {
 				console.log(result);
@@ -52,13 +57,11 @@ router.post('/search', function(req, res) {
 function getGoingTos(business) {
 	var deferred = Q.defer();
 	User.find({'goingTo' : business.id}, function(err, users) {
+		var number_of_user = 0;
 		if(users) {
-			console.log('resolving');
-			deferred.resolve({id : business.id, name : business.name, img_url: business.image_url, rating: business.rating, userCount : users.length});
-		} else {
-			console.log('rejecting');
-			deferred.reject();
+			users = users.length
 		}
+		deferred.resolve({id : business.id, name : business.name, img_url: business.image_url, rating: business.rating, userCount : number_of_user});
 	});
 	return deferred.promise;
 };
